@@ -110,7 +110,7 @@ class ActionClassifier(object):
                                        length=6 if self.__need_flow else 1,
                                        new_size=(340, 256))
 
-        all_scores = []
+        all_features = {'resnet':np.empty(shape=(0,2048)), 'bn':np.empty(shape=(0,1024))}
         all_start = time.clock()
 
         cnt = 0
@@ -129,7 +129,6 @@ class ActionClassifier(object):
 
             start = time.clock()
             cnt += 1
-            all_features = []
 
             flow_stack = None
             for net, run, in_type, conv_support, net_input_size in \
@@ -141,25 +140,25 @@ class ActionClassifier(object):
 
                 if in_type == 0:
                     # RGB input
-
-                    all_features.append(net.predict_single_frame(frm_stack[:1], self.__score_name_resnet,
-                                                               over_sample=not conv_support,
-                                                               frame_size=None if net_input_size == 224 else frame_size
-                                                               ))
+                    # TODO for now we only sample one frame w/o applying mean-pooling 
+                    all_features['resnet'] = np.concatenate((all_features['resnet'], net.predict_single_frame(frm_stack[:1], self.__score_name_resnet,
+                                       over_sample=not conv_support,
+                                       frame_size=None if net_input_size == 224 else frame_size
+                                       )), axis=0)
                 elif in_type == 1:
                     # Flow input
                     if flow_stack is None:
                         # Extract flow if necessary
                         flow_stack = self.__flow_extractor.extract_flow(frm_stack, frame_size)
 
-                    all_features.append(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
-                                                                    over_sample=not conv_support))
+                    all_features['bn'] = np.concatenate((all_features['bn'], np.squeeze(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
+                                       over_sample=not conv_support))), axis=0)
 
             end = time.clock()
             elapsed = end - start
             print "frame sample {}: {} second".format(cnt, elapsed)
 
-        print(type(all_features[0]), type(all_features[1]))
+        print all_features['resnet'].shape, all_features['bn'].shape
         return all_features
 
     def _classify_from_url(self, url, model_mask):
