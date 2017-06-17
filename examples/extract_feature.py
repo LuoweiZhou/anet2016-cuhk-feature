@@ -48,5 +48,3 @@ rst = cls.classify(VIDEO_NAME)
 
 
 
-
-

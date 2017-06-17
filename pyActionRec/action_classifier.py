@@ -25,7 +25,7 @@ class ActionClassifier(object):
     This class provides and end-to-end interface to classifying videos into activity classes
     """
 
-    def __init__(self, models=list(), total_norm_weights=None, score_name='fc-action', dev_id=0):
+    def __init__(self, models=list(), total_norm_weights=None, score_name='', dev_id=0):
         """
         Contruct an action classifier
         Args:
@@ -58,7 +58,8 @@ class ActionClassifier(object):
         self.__need_flow = max(self.__input_type) > 0
 
         # the name in the proto for action classes
-        self.__score_name = score_name
+        self.__score_name_resnet = 'caffe.Flatten_673'
+        self.__score_name_bn = 'global_pool'
 
         # the video downloader
         self.__video_dl = youtube_dl.YoutubeDL(
@@ -141,7 +142,7 @@ class ActionClassifier(object):
                 if in_type == 0:
                     # RGB input
 
-                    all_features.append(net.predict_single_frame(frm_stack[:1], self.__score_name,
+                    all_features.append(net.predict_single_frame(frm_stack[:1], self.__score_name_resnet,
                                                                over_sample=not conv_support,
                                                                frame_size=None if net_input_size == 224 else frame_size
                                                                ))
@@ -151,14 +152,15 @@ class ActionClassifier(object):
                         # Extract flow if necessary
                         flow_stack = self.__flow_extractor.extract_flow(frm_stack, frame_size)
 
-                    all_features.append(net.predict_single_flow_stack(flow_stack, self.__score_name,
+                    all_features.append(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
                                                                     over_sample=not conv_support))
 
             end = time.clock()
             elapsed = end - start
             print "frame sample {}: {} second".format(cnt, elapsed)
 
-        return final_scores, all_scores, total_time
+        print(type(all_features[0]), type(all_features[1]))
+        return all_features
 
     def _classify_from_url(self, url, model_mask):
         """

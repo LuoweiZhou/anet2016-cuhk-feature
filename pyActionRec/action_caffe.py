@@ -35,7 +35,7 @@ class CaffeNet(object):
 
         self._sample_shape = self._net.blobs['data'].data.shape
 
-    def predict_single_frame(self, frame, score_name, over_sample=True, multiscale=None, frame_size=None):
+    def predict_single_frame(self, frame, feature_name, over_sample=True, multiscale=None, frame_size=None):
 
         if frame_size is not None:
             frame = [cv2.resize(x, frame_size) for x in frame]
@@ -54,10 +54,10 @@ class CaffeNet(object):
 
         self._net.blobs['data'].reshape(*data.shape)
         self._net.reshape()
-        out = self._net.forward(blobs=[score_name,], data=data)
-        return out[score_name].copy()
+        out = self._net.forward(blobs=[feature_name,], data=data)
+        return out[feature_name].copy()
 
-    def predict_single_flow_stack(self, frame, score_name, over_sample=True):
+    def predict_single_flow_stack(self, frame, feature_name, over_sample=True):
 
         if over_sample:
             os_frame = flow_stack_oversample(frame, (self._sample_shape[2], self._sample_shape[3]))
@@ -68,7 +68,7 @@ class CaffeNet(object):
 
         self._net.blobs['data'].reshape(*data.shape)
         self._net.reshape()
-        out = self._net.forward(blobs=[score_name,], data=data)
-        return out[score_name].copy()
+        out = self._net.forward(blobs=[feature_name,], data=data)
+        return out[feature_name].copy()
 
 

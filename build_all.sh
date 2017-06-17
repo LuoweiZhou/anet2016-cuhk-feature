@@ -43,8 +43,7 @@ echo "Building Dense Flow"
 cd lib/dense_flow
 mkdir build 
 cd build
-#OpenCV_DIR=../../../3rd-party/opencv-$version/build/ cmake .. -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF
-OpenCV_DIR=/home/ubuntu/miniconda2 cmake .. -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF
+OpenCV_DIR=../../../3rd-party/opencv-$version/build/ cmake .. -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF
 make -j
 echo "Dense Flow built"
 
@@ -53,8 +52,7 @@ echo "Building Caffe"
 cd ../../caffe-action
 mkdir build 
 cd build
-#OpenCV_DIR=../../../3rd-party/opencv-$version/build/ cmake .. -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF
-OpenCV_DIR=/home/ubuntu/miniconda2 cmake .. -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF
+OpenCV_DIR=../../../3rd-party/opencv-$version/build/ cmake .. -DCUDA_USE_STATIC_CUDA_RUNTIME=OFF
 make -j32
 echo "Caffe Built"
 cd ../../../
