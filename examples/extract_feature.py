@@ -19,15 +19,13 @@ from pyActionRec.anet_db import ANetDB
 import argparse
 import numpy as np
 
-
 parser = argparse.ArgumentParser()
-parser.add_argument("video_name", type=str)
+parser.add_argument("data_path", type=str)
 parser.add_argument("--use_flow", action="store_true", default=False)
 parser.add_argument("--gpu", type=int, default=0)
 
 args = parser.parse_args()
 
-VIDEO_NAME = args.video_name
 USE_FLOW = args.use_flow
 GPU=args.gpu
 
@@ -44,7 +42,13 @@ if USE_FLOW:
                    0.2, 1, False, 224))
 
 cls = ActionClassifier(models, dev_id=GPU)
-rst = cls.classify(VIDEO_NAME)
 
-
+for act in os.listdir(args.data_path):
+    print 'Processing videos in directory: ', act
+    act_path = os.path.join(args.data_path, act)
+    for vid in os.listdir(act_path):
+        if vid[-4:] == '.mp4':
+            print 'Processing video: ', vid
+            vid_path = os.path.join(act_path, vid)
+            rst = cls.classify(vid_path)
 

@@ -8,16 +8,13 @@ import numpy as np
 import time
 import youtube_dl
 import os
+import subprocess
 
-
-def _dummy_vid_info(url=''):
-    info_dict = {
-        'annotations': list(),
-        'url': url,
-        'duration': 10,
-        'subset': 'testing'
-    }
-    return Video('0', info_dict)
+# get video duration
+def getLength(filename):
+    result = subprocess.Popen(["ffprobe", filename],
+        stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+    return [x for x in result.stdout.readlines() if "Duration" in x]
 
 
 class ActionClassifier(object):
@@ -100,13 +97,25 @@ class ActionClassifier(object):
             cls: classification scores
             all_features: RGB ResNet feature and Optical flow BN Inception feature in a list
         """
-        vid_info = _dummy_vid_info()
+ 
+        duration = getLength(filename)
+        duration_in_second = int(duration[0][15:17])*60+int(duration[0][18:20])
+        info_dict = {
+          'annotations': list(),
+          'url': '',
+          'duration': duration_in_second,
+          'subset': 'testing'
+         }
+
+        vid_info = Video('0', info_dict)
+        # update dummy video info...
+
         vid_info.path = filename
         video_proc = VideoProc(vid_info)
         video_proc.open_video(True)
 
         # here we use interval of 30, roughly 1FPS
-        frm_it = video_proc.frame_iter(timely=False, ignore_err=True, interval=30,
+        frm_it = video_proc.frame_iter(timely=True, ignore_err=True, interval=0.5,
                                        length=6 if self.__need_flow else 1,
                                        new_size=(340, 256))
 
@@ -159,6 +168,9 @@ class ActionClassifier(object):
             print "frame sample {}: {} second".format(cnt, elapsed)
 
         print all_features['resnet'].shape, all_features['bn'].shape
+        np.savetxt(filename[:-4]+"_resnet.csv",all_features['resnet'],delimiter=",")
+        np.savetxt(filename[:-4]+"_bn.csv",all_features['bn'],delimiter=",")
+
         return all_features
 
     def _classify_from_url(self, url, model_mask):

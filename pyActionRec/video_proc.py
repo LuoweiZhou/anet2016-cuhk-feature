@@ -83,6 +83,7 @@ class VideoProc(object):
         if timely:
             # calculate the frame interval for the time interval
             frame_interval = int(self._real_fps * interval)
+            print frame_interval
         else:
             frame_interval = interval
 
