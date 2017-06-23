@@ -43,12 +43,17 @@ if USE_FLOW:
 
 cls = ActionClassifier(models, dev_id=GPU)
 
+process_list = {}
+counter = 0
 for act in os.listdir(args.data_path):
     print 'Processing videos in directory: ', act
     act_path = os.path.join(args.data_path, act)
     for vid in os.listdir(act_path):
-        if vid[-4:] == '.mp4':
-            print 'Processing video: ', vid
-            vid_path = os.path.join(act_path, vid)
-            rst = cls.classify(vid_path)
-
+        if vid not in process_list:
+            if vid[-4:] == '.mp4' or vid[-4:] == '.mkv' or vid[-4:] == 'webm':
+                print 'Processing video: ', vid
+                vid_path = os.path.join(act_path, vid)
+                rst = cls.classify(vid_path)
+                counter += 1
+                process_list[vid] = counter
+                print 'NO. ', counter

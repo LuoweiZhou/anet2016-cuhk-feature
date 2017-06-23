@@ -160,16 +160,25 @@ class ActionClassifier(object):
                         # Extract flow if necessary
                         flow_stack = self.__flow_extractor.extract_flow(frm_stack, frame_size)
 
-                    all_features['bn'] = np.concatenate((all_features['bn'], np.squeeze(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
-                                       over_sample=not conv_support))), axis=0)
+                    # store all the optical flow features
+                    # all_features['bn'] = np.concatenate((all_features['bn'], np.squeeze(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
+                    #                   over_sample=not conv_support))), axis=0)
+
+                    # store only the optical flow feature for the center crop
+                    bn_aug = np.squeeze(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
+                                       over_sample=not conv_support))
+                    bn_aug = np.squeeze(bn_aug)
+                    bn_center = bn_aug[5]
+                    bn_center = np.reshape(bn_center, (1, bn_center.shape[0]))
+                    all_features['bn'] = np.concatenate((all_features['bn'], bn_center), axis=0)
 
             end = time.clock()
             elapsed = end - start
             print "frame sample {}: {} second".format(cnt, elapsed)
 
         print all_features['resnet'].shape, all_features['bn'].shape
-        np.savetxt(filename[:-4]+"_resnet.csv",all_features['resnet'],delimiter=",")
-        np.savetxt(filename[:-4]+"_bn.csv",all_features['bn'],delimiter=",")
+        np.save(filename[:-4]+"_resnet",all_features['resnet'])
+        np.save(filename[:-4]+"_bn",all_features['bn'])
 
         return all_features
 
