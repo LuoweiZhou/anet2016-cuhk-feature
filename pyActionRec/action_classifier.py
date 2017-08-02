@@ -99,7 +99,9 @@ class ActionClassifier(object):
         """
  
         duration = getLength(filename)
-        duration_in_second = int(duration[0][15:17])*60+int(duration[0][18:20])
+        # TODO you should remember how stupid this was!
+        # duration_in_second = int(duration[0][15:17])*60+int(duration[0][18:20])
+        duration_in_second = float(duration[0][15:17])*60+float(duration[0][18:23])
         info_dict = {
           'annotations': list(),
           'url': '',
