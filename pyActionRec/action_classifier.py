@@ -117,7 +117,7 @@ class ActionClassifier(object):
         video_proc.open_video(True)
 
         # here we use interval of 30, roughly 1FPS
-        frm_it = video_proc.frame_iter(timely=True, ignore_err=True, interval=0.5,
+        frm_it = video_proc.frame_iter(timely=True, ignore_err=True, interval=0.1,
                                        length=6 if self.__need_flow else 1,
                                        new_size=(340, 256))
 
@@ -160,7 +160,10 @@ class ActionClassifier(object):
                     # Flow input
                     if flow_stack is None:
                         # Extract flow if necessary
-                        flow_stack = self.__flow_extractor.extract_flow(frm_stack, frame_size)
+                        # we disabled spatial data aug
+                        # the size for flow frames are 224 x 224, hard coded
+                        flow_frame_size = (224, 224)
+                        flow_stack = self.__flow_extractor.extract_flow(frm_stack, flow_frame_size)
 
                     # store all the optical flow features
                     # all_features['bn'] = np.concatenate((all_features['bn'], np.squeeze(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
@@ -168,9 +171,11 @@ class ActionClassifier(object):
 
                     # store only the optical flow feature for the center crop
                     bn_aug = np.squeeze(net.predict_single_flow_stack(flow_stack, self.__score_name_bn,
-                                       over_sample=not conv_support))
-                    bn_aug = np.squeeze(bn_aug)
-                    bn_center = bn_aug[5]
+                                       over_sample = False))
+                                       # over_sample=not conv_support))
+                    # bn_aug = np.squeeze(bn_aug)
+                    # bn_center = bn_aug[5]
+                    bn_center = bn_aug
                     bn_center = np.reshape(bn_center, (1, bn_center.shape[0]))
                     all_features['bn'] = np.concatenate((all_features['bn'], bn_center), axis=0)
 

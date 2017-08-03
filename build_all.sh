@@ -18,26 +18,26 @@ version="2.4.13"
 
 # echo "Building OpenCV" $version
 mkdir 3rd-party/
-#cd 3rd-party/
+cd 3rd-party/
 
 echo "Installing Dependenices"
 sudo apt-get -qq install libopencv-dev build-essential checkinstall cmake pkg-config yasm libjpeg-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev libxine-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev libv4l-dev python-dev python-numpy libtbb-dev libqt4-dev libgtk2.0-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev x264 v4l-utils
 
-#echo "Downloading OpenCV" $version
-#wget -O OpenCV-$version.zip https://github.com/Itseez/opencv/archive/$version.zip
+# echo "Downloading OpenCV" $version
+wget -O OpenCV-$version.zip https://github.com/Itseez/opencv/archive/$version.zip
 
-#echo "Installing OpenCV" $version
-#unzip OpenCV-$version.zip
-#cd opencv-$version
-#mkdir build
-#cd build
-#cmake -D CMAKE_BUILD_TYPE=RELEASE -D WITH_TBB=ON  -D WITH_V4L=ON  -D WITH_QT=ON -D WITH_OPENGL=ON ..
-#make -j32
-#cp lib/cv2.so ../../../
-#echo "OpenCV" $version "built"
+echo "Installing OpenCV" $version
+unzip OpenCV-$version.zip
+cd opencv-$version
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D WITH_TBB=ON  -D WITH_V4L=ON  -D WITH_QT=ON -D WITH_OPENGL=ON ..
+make -j32
+cp lib/cv2.so ../../../
+echo "OpenCV" $version "built"
 
 # build dense_flow
-#cd ../../../
+cd ../../../
 
 echo "Building Dense Flow"
 cd lib/dense_flow

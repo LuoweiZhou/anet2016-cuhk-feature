@@ -3,7 +3,7 @@ This files provids facilities for processing videos
 """
 
 import cv2
-
+import math
 
 class VideoProc(object):
     """
@@ -82,8 +82,8 @@ class VideoProc(object):
 
         if timely:
             # calculate the frame interval for the time interval
-            frame_interval = int(self._real_fps * interval)
-            print frame_interval
+            frame_interval = int(math.ceil(self._real_fps * interval))
+            print('frame interval is {}'.format(frame_interval))
         else:
             frame_interval = interval
 

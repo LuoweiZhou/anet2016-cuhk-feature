@@ -60,15 +60,13 @@ class CaffeNet(object):
     def predict_single_flow_stack(self, frame, feature_name, over_sample=True):
 
         if over_sample:
+            # we disabled spatial data aug
             os_frame = flow_stack_oversample(frame, (self._sample_shape[2], self._sample_shape[3]))
         else:
             os_frame = np.array([frame,])
 
         data = os_frame - 128
-
         self._net.blobs['data'].reshape(*data.shape)
         self._net.reshape()
         out = self._net.forward(blobs=[feature_name,], data=data)
         return out[feature_name].copy()
-
-
