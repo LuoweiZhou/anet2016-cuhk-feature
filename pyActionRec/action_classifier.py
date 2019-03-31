@@ -99,8 +99,6 @@ class ActionClassifier(object):
         """
  
         duration = getLength(filename)
-        # TODO you should remember how stupid this was!
-        # duration_in_second = int(duration[0][15:17])*60+int(duration[0][18:20])
         duration_in_second = float(duration[0][15:17])*60+float(duration[0][18:23])
         info_dict = {
           'annotations': list(),
@@ -117,7 +115,7 @@ class ActionClassifier(object):
         video_proc.open_video(True)
 
         # here we use interval of 30, roughly 1FPS
-        frm_it = video_proc.frame_iter(timely=True, ignore_err=True, interval=0.1,
+        frm_it = video_proc.frame_iter(timely=True, ignore_err=True, interval=0.5,
                                        length=6 if self.__need_flow else 1,
                                        new_size=(340, 256))
 
