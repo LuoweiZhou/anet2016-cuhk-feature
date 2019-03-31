@@ -1,12 +1,5 @@
 """
-This scripts demos how to do single video classification using the framework
-Before using this scripts, please download the model files using
-
-bash models/get_reference_models.sh
-
-Usage:
-
-python classify_video.py <video name>
+Script for ActivityNet/YouCook2 feature extraction
 """
 
 import os
@@ -49,7 +42,7 @@ for vid in os.listdir(args.data_path):
     if os.path.isfile(os.path.join(args.data_path, vid[:-4]+"_bn.npy")) and os.path.isfile(os.path.join(args.data_path, vid[:-4]+"_resnet.npy")):
         counter += 1
         process_list[vid] = counter
-        print 'already processed!', 'No. ', counter
+        print 'Already processed!', 'No. ', counter
     elif vid not in process_list:
         if vid[-4:] == '.mp4' or vid[-4:] == '.mkv' or vid[-4:] == 'webm':
             print 'Processing video: ', vid
